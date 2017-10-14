@@ -3,22 +3,19 @@ package main
 import (
 	"github.com/gorilla/securecookie"
 	"net/http"
+	"fmt"
 )
 
 var cookieHandler = securecookie.New(
 	securecookie.GenerateRandomKey(64),
 	securecookie.GenerateRandomKey(32))
 
-func loginPageHandler(response http.ResponseWriter, request *http.Request) {
-	context := Context{Title: "Login Page"}
-	renderBlank(response, "login", "blank_js", context)
-}
 
 func getUserName(request *http.Request) (userName string) {
 	if cookie, err := request.Cookie("session"); err == nil {
 		cookieValue := make(map[string]string)
 		if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
-			userName = cookieValue["email"]
+			userName = cookieValue["Username"]
 		}
 	}
 	return userName
@@ -26,7 +23,7 @@ func getUserName(request *http.Request) (userName string) {
 
 func setSession(userName string, response http.ResponseWriter) {
 	value := map[string]string{
-		"email": userName,
+		"Username": userName,
 	}
 	if encoded, err := cookieHandler.Encode("session", value); err == nil {
 		cookie := &http.Cookie{
@@ -51,13 +48,33 @@ func clearSession(response http.ResponseWriter) {
 // login handler
 
 func loginHandler(response http.ResponseWriter, request *http.Request) {
-	name := request.FormValue("email")
-	pass := request.FormValue("password")
+	clearSession(response);
+	context := Context{Title: "Login Page"}
+	renderLogin(response, context)
+}
+
+
+func loginHandlerPost(response http.ResponseWriter, request *http.Request) {
+	name := request.FormValue("Username")
+	pass := request.FormValue("Password")
+
+	fmt.Println("name")
+	fmt.Println(pass)
+
 	redirectTarget := "/"
-	if name != "" && pass != "" {
+	if (name == "Fatih") && (pass == "1") {
 		// .. check credentials ..
 		setSession(name, response)
 		redirectTarget = "/main"
+		fmt.Println(name)
+
 	}
 	http.Redirect(response, request, redirectTarget, 302)
 }
+
+// logout handler
+func logoutHandler(response http.ResponseWriter, request *http.Request) {
+	clearSession(response)
+	http.Redirect(response, request, "/", 302)
+}
+
