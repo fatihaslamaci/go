@@ -47,25 +47,24 @@ func clearSession(response http.ResponseWriter) {
 
 // login handler
 
-func loginHandler(response http.ResponseWriter, request *http.Request) {
-	clearSession(response);
-	context := Context{Title: "Login Page"}
-	renderLogin(response, context)
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	clearSession(w);
+	render2(w,"login",nil)
 }
 
 
 func loginHandlerPost(response http.ResponseWriter, request *http.Request) {
-	name := request.FormValue("Username")
-	pass := request.FormValue("Password")
+	name := request.FormValue("username")
+	pass := request.FormValue("password")
 
 	fmt.Println("name")
 	fmt.Println(pass)
 
-	redirectTarget := "/"
+	redirectTarget := "/login.html"
 	if (name == "Fatih") && (pass == "1") {
 		// .. check credentials ..
 		setSession(name, response)
-		redirectTarget = "/main"
+		redirectTarget = "/auth/main.html"
 		fmt.Println(name)
 
 	}

@@ -1,0 +1,23 @@
+
+{{define "page-title"}}Giriş  Sayfası{{end}}
+
+{{define "nav"}}
+    <li><a href="#">Şifremi Unuttum</a></li>
+    <li><a href="#">Yeni Üyelik</a></li>
+{{end}}
+
+
+{{define "page-body"}}
+
+<form action="/login">
+    Kullanıcı Adı:<br>
+    <input type="text" name="username"><br>
+    Şifre:<br>
+    <input type="text" name="password">
+    <input type="submit" value="Submit">
+</form>
+
+{{end}}
+
+
+
