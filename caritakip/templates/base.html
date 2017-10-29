@@ -2,64 +2,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        div.container {
-            width: 100%;
-            border: 1px solid gray;
-        }
-
-        header, footer {
-            padding: 1em;
-            color: white;
-            background-color: black;
-            clear: left;
-            text-align: center;
-        }
-
-        nav {
-            float: left;
-            max-width: 160px;
-            margin: 0;
-            padding: 1em;
-        }
-
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        nav ul a {
-            text-decoration: none;
-        }
-
-        article {
-            margin-left: 170px;
-            border-left: 1px solid gray;
-            padding: 1em;
-            overflow: hidden;
-        }
-    </style>
     <meta charset="UTF-8">
-    <title>{{template "page-title" .}} - Snippetbox</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <title>{{template "page-title" .}} - Cari Hesap</title>
 </head>
 <body>
 
 <div class="container">
 
+
     <header>
-        <h2>Cari Hesap Programı</h2>
+            <h1>eCariHesap</h1>
     </header>
 
 
     <nav>
         <ul>
-            {{block "nav" .}}
-            <li><a href="#">Cari Kartlar</a></li>
+        {{block "nav" .}}
+            <li><a href="../">Ana Sayfa</a></li>
+            <li><a href="/auth/carikartlar.html">Cari Kartlar</a></li>
             <li><a href="#">Raporlar</a></li>
             <li><a href="#">Fatura</a></li>
             <li><a><br></a></li>
-            <li><a href="/logout.html">Çıkış</a></li>
+            {{if .UserName}}
+                <li><a href="#">Merhaba {{.UserName}}</a></li>
+                <li><a href="/logout.html">Çıkış Yap</a></li>
             {{end}}
+        {{end}}
         </ul>
     </nav>
 

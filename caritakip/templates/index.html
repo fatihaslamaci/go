@@ -1,14 +1,31 @@
 {{define "page-title"}}Giriş  Sayfası{{end}}
 
 {{define "nav"}}
-<li><a href="auth/main.html">Giriş Yapın</a></li>
-<li><a href="#">Yeni Üyelik</a></li>
+    {{if .UserName}}
+        <li><a href="../auth/dashboard.html">Dashboard</a></li>
+        <li><a href="#">Merhaba {{.UserName}}</a></li>
+        <li><a href="/logout.html">Çıkış Yap</a></li>
+    {{else}}
+        <li><a href="login.html">Giriş Yap</a></li>
+    {{end}}
 {{end}}
-
 
 {{define "page-body"}}
 
-<a> Cari Hesap Programı. Lite Versiyon</a>
+<h3>
+    Cari Hesap Programı
+</h3>
+<a>
+    Cari hesaplarınızı tanıtın.
+    Hesaplara Borç/Alacak kaydı işleyin.
+    Cari hesap eksrelerinizi görüntüleyin.
+    Müşterilerinize Fatura kesin.
+    Tüm bu özelliklere ücretsiz sahip olun.
+    Dilerseniz çok uygun fiyatlar ile e-fatura ve e-arşiv faturası kesin.
+    <br>Bütün bu özellikler için tek yapmanız gereken üye olmak. Üyelik için lütfen <a href="login.html">tıklayın</a>
+
+
+</a>
 
 {{end}}
 

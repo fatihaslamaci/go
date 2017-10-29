@@ -49,7 +49,7 @@ func clearSession(response http.ResponseWriter) {
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	clearSession(w);
-	render2(w,"login",nil)
+	render2(w,r,"login",Context{})
 }
 
 
@@ -61,10 +61,10 @@ func loginHandlerPost(response http.ResponseWriter, request *http.Request) {
 	fmt.Println(pass)
 
 	redirectTarget := "/login.html"
-	if (name == "Fatih") && (pass == "1") {
+	if ((name == "Fatih") && (pass == "1"))||((name == "Ahmet") && (pass == "1")) {
 		// .. check credentials ..
 		setSession(name, response)
-		redirectTarget = "/auth/main.html"
+		redirectTarget = "/auth/dashboard.html"
 		fmt.Println(name)
 
 	}

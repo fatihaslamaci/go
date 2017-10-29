@@ -1,0 +1,29 @@
+{{define "page-title"}}Dashboard Sayfası{{end}}
+
+{{define "page-body"}}
+
+
+
+<form action="/auth/carikartkaydet">
+    <input type="hidden" name="id" value="{{.Data.Id}}">
+    Kod:<br>
+    <input type="text" name="kod" value="{{.Data.Kod}}"><br>
+    Unvan:<br>
+    <input type="text" name="unvan" value="{{.Data.Unvan}}"><br>
+    Telefon:<br>
+    <input type="tel" name="telefon" value="{{.Data.Telefon}}"><br>
+    Email:<br>
+    <input type="email" name="email" value="{{.Data.Email}}"><br>
+    Adres:<br>
+    <textarea name="adres" rows="10" cols="30">{{.Data.Adres}}</textarea><br>
+
+    <input type="submit" value="Kaydet">
+    {{.Message}}
+
+</form>
+
+
+
+
+
+{{end}}
