@@ -1,44 +1,12 @@
-package main
+package datalayer
 
-import "database/sql"
-
-func InitDB(filepath string) *sql.DB {
-	db, err := sql.Open("sqlite3", filepath)
-	if err != nil { panic(err) }
-	if db == nil { panic("db nil") }
-	return db
-}
-
-func CreateTable(db *sql.DB) {
-	// create table if not exists
-	sql_table := `
-	CREATE TABLE IF NOT EXISTS carihesaplar(
-		id INTEGER	primary key	autoincrement,
-		kod VARCHAR(50),
-		unvan VARCHAR(150),
-		telefon VARCHAR(15),
-		adres TEXT,
-		email VARCHAR(50),
-		created DATE
-	);
-
-	CREATE TABLE IF NOT EXISTS kullanicilar(
-		id INTEGER	primary key	autoincrement,
-		ad VARCHAR(50),
-		email VARCHAR(150),
-		sifre VARCHAR(150)
-	);
-	`
-	_, err := db.Exec(sql_table)
+import (
+	"database/sql"
+	"github.com/fatihaslamaci/go/caritakip/entity"
+)
 
 
-	if err != nil { panic(err) }
-}
-
-
-
-
-func StoreItem(db *sql.DB, items []CariKart) {
+func StoreItem(db *sql.DB, items []entity.CariKart) {
 	/*
 	sql_additem := `
 	INSERT OR REPLACE INTO carihe (
@@ -55,7 +23,7 @@ func StoreItem(db *sql.DB, items []CariKart) {
 	}
 }
 
-func UpdateCariKart(db *sql.DB, item CariKart) {
+func UpdateCariKart(db *sql.DB, item entity.CariKart) {
 	/*
 	sql_additem := `
 	INSERT OR REPLACE INTO carihe (
@@ -72,20 +40,25 @@ func UpdateCariKart(db *sql.DB, item CariKart) {
 
 
 
-func ReadItem(db *sql.DB, SonId int) ([]CariKart,int){
+func ReadItem(db *sql.DB, SonId int) ([]entity.CariKart,int){
 	rows, err := db.Query(`
-Select id,kod, unvan, telefon, adres, email from carihesaplar
+Select id,kod, unvan, telefon, adres, email
+
+  ,ifnull((select sum(ifnull(tutar,0)) from carihareket where carihesapid=carihesaplar.id and ba=1),0) as Borc
+  ,ifnull((select sum(ifnull(tutar,0)) from carihareket where carihesapid=carihesaplar.id and ba=0),0) as Alacak
+
+from carihesaplar
 where id>?
-order by id LIMIT 25
+order by id LIMIT 30
 `,SonId)
 
 	if err != nil { panic(err) }
 	defer rows.Close()
 
-	var result []CariKart
+	var result []entity.CariKart
 	for rows.Next() {
-		item := CariKart{}
-		err2 := rows.Scan(&item.Id, &item.Kod, &item.Unvan,&item.Telefon,&item.Adres,&item.Email)
+		item := entity.CariKart{}
+		err2 := rows.Scan(&item.Id, &item.Kod, &item.Unvan,&item.Telefon,&item.Adres,&item.Email,&item.Borc,&item.Alacak)
 		if err2 != nil { panic(err2) }
 		result = append(result, item)
 	}
@@ -99,8 +72,8 @@ order by id LIMIT 25
 	return result,son
 }
 
-func ReadItemId(db *sql.DB, id int) CariKart {
-	item := CariKart{}
+func ReadItemId(db *sql.DB, id int) entity.CariKart {
+	item := entity.CariKart{}
 	row := db.QueryRow("Select id,kod, unvan, telefon, adres, email from carihesaplar where id=?",id)
 	err :=row.Scan(&item.Id, &item.Kod, &item.Unvan,&item.Telefon,&item.Adres,&item.Email)
 	if err != nil { panic(err) }

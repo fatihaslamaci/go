@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/securecookie"
 	"net/http"
 	"fmt"
+	"github.com/fatihaslamaci/go/caritakip/datalayer"
 )
 
 var cookieHandler = securecookie.New(
@@ -61,9 +62,12 @@ func loginHandlerPost(response http.ResponseWriter, request *http.Request) {
 	fmt.Println(pass)
 
 	redirectTarget := "/login.html"
-	if ((name == "Fatih") && (pass == "1"))||((name == "Ahmet") && (pass == "1")) {
+
+	kullanici:= datalayer.Login (db,name,pass)
+
+	if kullanici.Id>0 {
 		// .. check credentials ..
-		setSession(name, response)
+		setSession(kullanici.Ad, response)
 		redirectTarget = "/auth/dashboard.html"
 		fmt.Println(name)
 

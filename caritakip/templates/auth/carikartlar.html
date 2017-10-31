@@ -3,7 +3,12 @@
 {{define "page-body"}}
 
 
-<a href="\auth\carikartlar.html?id={{.KayitId}}"> sonraki </a>
+
+<a href="\auth\carikartlar.html?T=1&id={{.KayitId2}}">  < önceki  </a>
+
+<a href="\auth\carikartlar.html?T=2&id={{.KayitId}}">  sonraki >  </a>
+
+
 
 <table>
     <caption>Cari Kart Listesi</caption>
@@ -12,18 +17,22 @@
         <th>Unvan</th>
         <th>Kod</th>
         <th>Telefon</th>
-        <th>Email</th>
+        <th>Borc</th>
+        <th>Alacak</th>
         <th>Goster</th>
 
     </tr>
 
     {{range .Data}}
     <tr>
-        <td>{{.Id   }}</td>
+        <td>{{.Id      }}</td>
         <td>{{.Unvan   }}</td>
         <td>{{.Kod     }}</td>
         <td>{{.Telefon }}</td>
-        <td>{{.Email   }}</td>
+        <td>{{.Borc    }}</td>
+        <td>{{.Alacak  }}</td>
+
+
         <td><a href="\auth\carikart.html?id={{.Id}}">Detay;</a></td>
 
     </tr>

@@ -5,39 +5,32 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 
 	"database/sql"
+
 	_ "github.com/mattn/go-sqlite3"
+
+	"strconv"
+
+	"github.com/fatihaslamaci/go/caritakip/datalayer"
+	"github.com/fatihaslamaci/go/caritakip/entity"
 )
 
 type Context struct {
-	Title   string
-	Message string
+	Title    string
+	Message  string
 	UserName string
 
-	KayitId int
+	KayitId  string
+	KayitId2 string
 
-	Data    interface{}
+	Data interface{}
 }
 
-
-type CariKart struct {
-	Id int
-	Unvan   string
-	Kod     string
-	Telefon string
-	Adres   string
-	Email   string
-}
-
-
-
-func render2(w http.ResponseWriter,r *http.Request , tmpl string, context Context) {
+func render2(w http.ResponseWriter, r *http.Request, tmpl string, context Context) {
 	files := []string{
 		"./templates/base.html", "./templates/" + tmpl + ".html",
 	}
-
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
@@ -46,7 +39,7 @@ func render2(w http.ResponseWriter,r *http.Request , tmpl string, context Contex
 		return
 	}
 
-	context.UserName=getUserName(r)
+	context.UserName = getUserName(r)
 	err = ts.ExecuteTemplate(w, "base", context)
 	if err != nil {
 		log.Println(err.Error())
@@ -55,64 +48,14 @@ func render2(w http.ResponseWriter,r *http.Request , tmpl string, context Contex
 
 }
 
-
-
 func internalPageHandler(writer http.ResponseWriter, request *http.Request) {
-	context := Context{Title: "Cari Kart Tanıtımı", Data: ReadItemId(db,0)}
-	render2(writer,request, "auth/dashboard", context)
-}
-
-
-func carikartHandler(response http.ResponseWriter, r *http.Request) {
-
-	r.ParseForm()
-	id:=r.FormValue("id")
-	var i int
-	i,_ = strconv.Atoi(id)
-	context := Context{Title: "Cari Kart Tanıtımı", Data: ReadItemId(db,i)}
-	render2(response,r, "auth/carikart", context)
-}
-
-
-func carikartlarHandler(response http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
-	id,_:=strconv.Atoi(request.FormValue("id"))
-
-	fData, son := ReadItem(db, id)
-	context := Context{Data: fData, KayitId: son}
-	render2(response, request, "auth/carikartlar", context)
-
-}
-
-func carikartHandlerPost(response http.ResponseWriter, request *http.Request) {
-
-	id,_:= strconv.Atoi(request.FormValue("id"))
-
-	CariKart2 := ReadItemId(db,id)
-	CariKart2.Unvan = request.FormValue("unvan")
-	CariKart2.Kod = request.FormValue("kod")
-	CariKart2.Adres = request.FormValue("adres")
-	CariKart2.Telefon = request.FormValue("telefon")
-	CariKart2.Email = request.FormValue("email")
-
-	context := Context{}
-
-
-	if len(CariKart2.Kod) > 0 {
-		UpdateCariKart(db,CariKart2)
-		context.Message = "Kayıt yapıldı"
-	} else {
-		context.Message = "Lütfen Zorunlu alanları giriniz"
-	}
-
-	context.Data= CariKart2
-	render2(response,request, "auth/carikart", context)
-
+	context := Context{Title: "Cari Kart Tanıtımı", Data: datalayer.ReadItemId(db, 0)}
+	render2(writer, request, "auth/dashboard", context)
 }
 
 func indexPageHandler(w http.ResponseWriter, r *http.Request) {
 
-	render2(w, r,"index", Context{})
+	render2(w, r, "index", Context{})
 
 }
 
@@ -130,8 +73,6 @@ func makeLoginHandler(fn func(http.ResponseWriter, *http.Request)) http.HandlerF
 		fn(w, r)
 	}
 }
-
-
 
 func addStaticDir(s string) {
 	http.Handle("/"+s+"/", http.StripPrefix("/"+s, http.FileServer(http.Dir("./statics/"+s))))
@@ -156,17 +97,31 @@ var db *sql.DB
 func main() {
 
 	const dbpath = "./db/foo.sqlite"
-	db = InitDB(dbpath)
+	db = datalayer.InitDB(dbpath)
 	defer db.Close()
-	CreateTable(db)
+	datalayer.CreateTable(db)
 
-/*
-	var cariKartlar []CariKart
-	cariKartlar = make([]CariKart,2000000)
+	var carihareketler []entity.CariHareket
+	carihareketler = make([]entity.CariHareket, 200)
+	for i := 0; i < len(carihareketler); i++ {
+		// Display integer.
+		carihareketler[i] = entity.CariHareket{
+			Id:          i,
+			CariHesapId: i,
+			Ba:          true,
+			Tutar:       (100.02),
+		}
+
+	}
+
+	datalayer.InsertCariHareket(db, carihareketler)
+
+	var cariKartlar []entity.CariKart
+	cariKartlar = make([]entity.CariKart, 200)
 	for i := 0; i < len(cariKartlar); i++ {
 		// Display integer.
-		cariKartlar[i] = CariKart{
-			Id:i,
+		cariKartlar[i] = entity.CariKart{
+			Id:      i,
 			Kod:     RandStringBytesMaskImprSrc(10),
 			Unvan:   RandStringBytesMaskImprSrc(50),
 			Email:   RandStringBytesMaskImprSrc(10) + "@mail.com",
@@ -175,8 +130,8 @@ func main() {
 		}
 	}
 
-	StoreItem(db,cariKartlar)
-*/
+	datalayer.StoreItem(db, cariKartlar)
+
 	http.HandleFunc("/", makeLoginHandler(indexPageHandler))
 	http.HandleFunc("/login.html", loginHandler)
 	http.HandleFunc("/login", loginHandlerPost)
@@ -186,13 +141,11 @@ func main() {
 
 	http.HandleFunc("/auth/carikartkaydet", carikartHandlerPost)
 
-	http.HandleFunc("/auth/carikartlar.html", makeLoginHandler(carikartlarHandler))
-
+	http.HandleFunc("/auth/carikartlar.html", carikartlarHandler)
 
 	addStaticDirAll()
 	http.ListenAndServe(":8000", nil)
 
+	log.Println("server başladı")
+
 }
-
-
-
