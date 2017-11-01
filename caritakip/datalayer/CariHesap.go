@@ -77,5 +77,6 @@ func ReadItemId(db *sql.DB, id int) entity.CariKart {
 	row := db.QueryRow("Select id,kod, unvan, telefon, adres, email from carihesaplar where id=?",id)
 	err :=row.Scan(&item.Id, &item.Kod, &item.Unvan,&item.Telefon,&item.Adres,&item.Email)
 	if err != nil { panic(err) }
+
 	return item
 }

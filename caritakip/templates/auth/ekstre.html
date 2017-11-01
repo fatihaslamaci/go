@@ -1,0 +1,43 @@
+{{define "page-title"}}Eksre{{end}}
+
+{{define "page-body"}}
+
+
+
+<h3>
+    Kod : {{.DataDetail.Kod}}<br>
+    Unvan : {{.DataDetail.Unvan}}<br>
+</h3>
+
+<a href="\auth\carikartlar.html?T=1&id={{.KayitId2}}">  < önceki  </a>
+<a href="\auth\carikartlar.html?T=2&id={{.KayitId}}">  sonraki >  </a>
+
+
+
+
+<table>
+    <caption>Hesap Hareketleri</caption>
+    <tr>
+        <th>id</th>
+        <th>ba</th>
+        <th>tutar</th>
+        <th>Detay</th>
+    </tr>
+
+    {{range .Data}}
+    <tr>
+        <td>{{.CariHesapId}}</td>
+        <td>{{.Ba         }}</td>
+        <td>{{.Tutar      }}</td>
+
+        <td><a href="\auth\carikart.html?id={{.CariHesapId}}">Detay;</a></td>
+
+    </tr>
+    {{end}}
+
+
+</table>
+
+
+
+{{end}}

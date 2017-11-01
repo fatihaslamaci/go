@@ -16,6 +16,8 @@ import (
 	"github.com/fatihaslamaci/go/caritakip/entity"
 )
 
+var db *sql.DB
+
 type Context struct {
 	Title    string
 	Message  string
@@ -24,7 +26,10 @@ type Context struct {
 	KayitId  string
 	KayitId2 string
 
+	DataList []interface{}
 	Data interface{}
+	DataDetail interface{}
+
 }
 
 func render2(w http.ResponseWriter, r *http.Request, tmpl string, context Context) {
@@ -49,7 +54,16 @@ func render2(w http.ResponseWriter, r *http.Request, tmpl string, context Contex
 }
 
 func internalPageHandler(writer http.ResponseWriter, request *http.Request) {
-	context := Context{Title: "Cari Kart Tanıtımı", Data: datalayer.ReadItemId(db, 0)}
+	context := Context{Title: "Dash Board "}
+
+	tBorc,tAlacak := datalayer.ToplamRapor(db)
+
+	context.DataList= append(context.DataList, tBorc)
+	context.DataList= append(context.DataList, tAlacak)
+	context.DataList= append(context.DataList, (tBorc - tAlacak))
+
+
+
 	render2(writer, request, "auth/dashboard", context)
 }
 
@@ -92,7 +106,7 @@ func checkErr(err error) {
 	}
 }
 
-var db *sql.DB
+
 
 func main() {
 
@@ -136,12 +150,14 @@ func main() {
 	http.HandleFunc("/login.html", loginHandler)
 	http.HandleFunc("/login", loginHandlerPost)
 	http.HandleFunc("/logout.html", logoutHandler)
-	http.HandleFunc("/auth/dashboard.html", makeLoginHandler(internalPageHandler))
+	http.HandleFunc("/auth/dashboard.html", internalPageHandler)
 	http.HandleFunc("/auth/carikart.html", carikartHandler)
 
 	http.HandleFunc("/auth/carikartkaydet", carikartHandlerPost)
 
 	http.HandleFunc("/auth/carikartlar.html", carikartlarHandler)
+	http.HandleFunc("/auth/ekstre.html", ekstreHandler)
+
 
 	addStaticDirAll()
 	http.ListenAndServe(":8000", nil)

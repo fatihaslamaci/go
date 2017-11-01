@@ -19,7 +19,7 @@
         <th>Telefon</th>
         <th>Borc</th>
         <th>Alacak</th>
-        <th>Goster</th>
+        <th>işlem</th>
 
     </tr>
 
@@ -32,8 +32,8 @@
         <td>{{.Borc    }}</td>
         <td>{{.Alacak  }}</td>
 
-
-        <td><a href="\auth\carikart.html?id={{.Id}}">Detay;</a></td>
+        <td><a href="\auth\carikart.html?id={{.Id}}"> Detay </a>
+        <a href="\auth\ekstre.html?id={{.Id}}"> Ekstre </a></td>
 
     </tr>
     {{end}}

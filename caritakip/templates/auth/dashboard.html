@@ -2,5 +2,12 @@
 
 {{define "page-body"}}
 <h1>Dashboard</h1>
-<a>Yapım aşamasında</a>
+
+Toplam Borç : {{printf "%.2f" (index .DataList 0)}} <br>
+Toplam Alacak : {{printf "%.2f" (index .DataList 1)}} <br>
+Toplam Kar : {{printf "%.2f" (index .DataList 2)}} <br>
+
+
+
+
 {{end}}

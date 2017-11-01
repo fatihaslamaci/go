@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+
+
 func carikartlarHandler(response http.ResponseWriter, request *http.Request) {
 	request.ParseForm()
 	id :=request.FormValue("id")
@@ -55,6 +57,24 @@ func carikartlarHandler(response http.ResponseWriter, request *http.Request) {
 	context := Context{Data: fData, KayitId: s, KayitId2: s2}
 	render2(response, request, "auth/carikartlar", context)
 }
+
+
+func ekstreHandler(response http.ResponseWriter, request *http.Request) {
+	request.ParseForm()
+	id,_ := strconv.Atoi(request.FormValue("id"))
+
+	fData, _ := datalayer.Ekstre(db, id)
+
+
+	context := Context{Data: fData}
+	context.DataDetail=datalayer.ReadItemId(db,id)
+
+
+	render2(response, request, "auth/ekstre", context)
+}
+
+
+
 
 
 func carikartHandler(response http.ResponseWriter, r *http.Request) {
